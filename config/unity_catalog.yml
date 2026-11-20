@@ -1,0 +1,23 @@
+# Unity Catalog design for the project, following catalog.schema.table.
+# The script reads this file to create the catalog, schema, and permissions in the target environment.
+# per_domain strategy means one catalog per domain and environment, e.g. catalog=dev_wealth.
+# schemas are created for each layer, e.g. bronze, silver, gold.
+
+catalog_strategy: per_domain
+single_catalog: workspace
+
+layers: [bronze, silver, gold]
+
+domains:
+  wealth:
+    description: "Customers, accounts, and transactions data for the wealth management domain."
+    # owner: wealth_team
+  market:
+    description: "Market data for the wealth management domain."
+    # owner: market_team
+
+# Permissions can be defined at the catalog, schema, and table level. Permissions are inherited from the catalog to the schema and from the schema to the table.
+grants:
+  - principal: account users
+    domain: market
+    layer: gold
