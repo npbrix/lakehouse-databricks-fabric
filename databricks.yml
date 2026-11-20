@@ -1,0 +1,31 @@
+# Databricks Asset Bundle: defines the assets that are part of this bundle and how they should be deployed to Databricks.
+bundle:
+  name: lakehouse-finance-demo
+
+# Pipeleines and jobs can be defined in separate YAML files in the resources/ directory and included here.
+include:
+  - resources/*.yml
+
+variables:
+  env:
+    description: The environment to deploy to. Used as prefix on catalog name, for example dev_wealth.
+    default: dev
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-b971536d-4555.cloud.databricks.com
+    variables:
+      env: dev
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-b971536d-4555.cloud.databricks.com
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    permissions:
+      - user_name: ${workspace.current_user.userName}
+        level: CAN_MANAGE
+    variables:
+      env: prod
