@@ -2,9 +2,7 @@
 # The script reads this file to create the catalog, schema, and permissions in the target environment.
 # per_domain strategy means one catalog per domain and environment, e.g. catalog=dev_wealth.
 # schemas are created for each layer, e.g. bronze, silver, gold.
-
-catalog_strategy: per_domain
-single_catalog: workspace
+# read by scripts/setup_unity_catalog.py.
 
 layers: [bronze, silver, gold]
 
