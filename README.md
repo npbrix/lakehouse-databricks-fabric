@@ -8,7 +8,7 @@ Lakehouse Databricks Fabric demonstration in a financial industry context.
 ### Part 1 – Databricks lakehouse
 - [x] Project setup: local development in VS Code, Databricks Asset Bundles, Git
 - [x] Unity Catalog design as code: catalogs per domain and environment (Data Mesh), tags and grants
-- [ ] Synthetic data generator: customers, accounts, transactions and market prices incl. changes and data quality issues
+- [x] Synthetic data generator: customers, accounts, transactions and market prices incl. changes and data quality issues
 - [ ] Bronze: incremental, metadata-driven ingestion with Auto Loader (append-only)
 - [ ] Silver: cleansing, deduplication, expectations, quarantine and Change Data Feed
 - [ ] Gold: Kimball star schema with SCD2 dimensions (AUTO CDC) and point-in-time joins
