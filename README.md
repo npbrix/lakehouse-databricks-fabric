@@ -59,8 +59,8 @@ databricks bundle run wealth_pipeline
 - [x] Project setup: bundles, Databricks Connect, tests
 - [x] Unity Catalog design as code
 - [x] Synthetic source data
-- [ ] Bronze: metadata-driven ingestion with Auto Loader *(in progress)*
-- [ ] Unity Catalog and grants with Terraform
+- [x] Bronze: metadata-driven ingestion with Auto Loader
+- [ ] Unity Catalog and grants with Terraform  *(in progress)*
 - [ ] CI/CD with bundles and promotion from dev to prod
 - [ ] Ingestion patterns per source: CDC, watermark, snapshot diff, full load
 - [ ] Silver: cleansing and data quality expectations
