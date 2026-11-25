@@ -1,0 +1,9 @@
+# Source system: price_partner (market domain). See wealth/core_banking.yml for the fields.
+# Bronze tables: <env>_market.bronze_price_partner.<name>
+
+datasets:
+  - name: prices
+    description: Daily closing prices (CSV). The partner changes the schema over time.
+    format: csv
+    schema: >-
+      security_id STRING, price_date DATE, close_price DECIMAL(18,4)

@@ -1,0 +1,1 @@
+"""Ingestion framework: configuration and helpers shared by the pipelines."""

@@ -1,0 +1,42 @@
+# One pipeline per domain, 
+# as in a Data Mesh: each domain owns its pipeline and its catalog.
+# Bronze tables are written to bronze_<source_system> schemas (names set in src/pipelines/bronze.py).
+# the "configuration" part tells which the pipeline env and domain its running for
+# and where the source files are located.
+# the pipeline default schema is silver.
+
+resources:
+  pipelines:
+    wealth_pipeline:
+      name: wealth_pipeline
+      catalog: ${var.env}_wealth
+      schema: silver                 # default schema for tables without a schema in the name
+      serverless: true
+      libraries:
+        - file:
+            path: ../src/pipelines/bronze.py
+      environment:
+        dependencies:
+          - pyyaml                   # used to read the YAML files in config/sources/
+      configuration:
+        lakehouse.env: ${var.env}
+        lakehouse.domain: wealth
+        lakehouse.src_path: ${workspace.file_path}/src
+        lakehouse.sources_dir: ${workspace.file_path}/config/sources
+
+    market_pipeline:
+      name: market_pipeline
+      catalog: ${var.env}_market
+      schema: silver
+      serverless: true
+      libraries:
+        - file:
+            path: ../src/pipelines/bronze.py
+      environment:
+        dependencies:
+          - pyyaml
+      configuration:
+        lakehouse.env: ${var.env}
+        lakehouse.domain: market
+        lakehouse.src_path: ${workspace.file_path}/src
+        lakehouse.sources_dir: ${workspace.file_path}/config/sources

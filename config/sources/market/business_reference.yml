@@ -1,0 +1,10 @@
+# Source system: business_reference (market domain). See wealth/core_banking.yml for the fields.
+# Reference data maintained by the business, not by an operational system.
+# Bronze tables: <env>_market.bronze_business_reference.<name>
+
+datasets:
+  - name: asset_class_mapping
+    description: Business-owned mapping from instrument type to house asset class.
+    format: csv
+    schema: >-
+      instrument_type STRING, asset_class STRING, asset_sub_class STRING

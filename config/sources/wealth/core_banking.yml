@@ -1,0 +1,25 @@
+# Source system: core_banking (wealth domain).
+# The file name is the source system. Each dataset below becomes one bronze table:
+# <env>_wealth.bronze_core_banking.<name>
+# and is read from the folder <name> in the landing volume <env>_wealth.bronze_core_banking.landing.
+#
+#   name:        dataset name = bronze table name = landing folder name
+#   description: what the dataset is; becomes the table comment in Unity Catalog
+#   format:      file format Auto Loader reads (json or csv)
+#   schema:      expected columns as a Spark DDL string: the contract with the source system
+#   options:     extra Auto Loader / reader options for this dataset (optional)
+
+datasets:
+  - name: customers
+    description: Customer master. One JSON line per new or changed customer.
+    format: json
+    schema: >-
+      customer_id BIGINT, name STRING, email STRING, city STRING,
+      risk_profile STRING, is_deleted BOOLEAN, updated_at TIMESTAMP
+
+  - name: transactions
+    description: Deposits, withdrawals, buys and sells. Events are only ever added.
+    format: json
+    schema: >-
+      transaction_id STRING, account_id BIGINT, transaction_type STRING,
+      security_id STRING, amount DECIMAL(18,2), transaction_date DATE

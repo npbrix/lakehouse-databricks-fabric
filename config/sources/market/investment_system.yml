@@ -1,0 +1,10 @@
+# Source system: investment_system (market domain). See wealth/core_banking.yml for the fields.
+# Bronze tables: <env>_market.bronze_investment_system.<name>
+
+datasets:
+  - name: securities
+    description: Security master incl. funds and share classes.
+    format: json
+    schema: >-
+      security_id STRING, isin STRING, name STRING, instrument_type STRING,
+      issuer STRING, parent_security_id STRING, currency STRING, updated_at TIMESTAMP

@@ -21,16 +21,24 @@ log = logging.getLogger("generate_data")
 
 
 def upload(files: list[Path], env: str) -> None:
-    """Upload only the files written for this batch to their landing volumes.
+    """Upload only the files written for this batch to their source system's landing volume.
 
     Uploading file by file (instead of the whole data folder) means batches you have
     generated locally but do not want to deliver yet stay on your machine.
     """
     for f in files:
-        rel = f.relative_to(DATA_DIR)          # e.g. wealth/customers/batch=001/customers.json
-        domain, rest = rel.parts[0], Path(*rel.parts[1:])
-        target = f"dbfs:/Volumes/{env}_{domain}/bronze/landing/{rest.as_posix()}"
+        # e.g. wealth/core_banking/customers/batch=001/customers.json
+        rel = f.relative_to(DATA_DIR)
+        domain = rel.parts[0]
+        source_system = rel.parts[1]
+        rest = Path(*rel.parts[2:])            # customers/batch=001/customers.json
+        volume = f"/Volumes/{env}_{domain}/bronze_{source_system}/landing"
+        folder = f"dbfs:{volume}/{rest.parent.as_posix()}"  # .../landing/customers/batch=001
+        target = f"dbfs:{volume}/{rest.as_posix()}"
         log.info("Uploading %s -> %s", rel, target)
+        # Copying a single file into a volume does not create missing folders, so create
+        # them first. mkdir also creates parent folders and does nothing if they exist.
+        subprocess.run(["databricks", "fs", "mkdir", folder], check=True)
         # --overwrite makes the upload safe to repeat (idempotent).
         subprocess.run(["databricks", "fs", "cp", "--overwrite", str(f), target], check=True)
 

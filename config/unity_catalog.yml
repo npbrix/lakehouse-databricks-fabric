@@ -1,20 +1,27 @@
-# Unity Catalog design for the project, following catalog.schema.table.
-# The script reads this file to create the catalog, schema, and permissions in the target environment.
-# per_domain strategy means one catalog per domain and environment, e.g. catalog=dev_wealth.
-# schemas are created for each layer, e.g. bronze, silver, gold.
-# read by scripts/setup_unity_catalog.py.
-
-layers: [bronze, silver, gold]
+# Unity Catalog design for the project, read by scripts/setup_unity_catalog.py.
+#
+# catalog = <env>_<domain>                     e.g. dev_wealth          (who owns the data)
+# bronze  = bronze_<source_system> per system  e.g. dev_wealth.bronze_core_banking (source lineage: where the data comes from, with a landing volume per system)
+# silver  = one schema per domain              e.g. dev_wealth.silver   (business entities)
+# gold    = one schema per domain              e.g. dev_wealth.gold     (data products)
 
 domains:
   wealth:
-    description: "Customers, accounts, and transactions data for the wealth management domain."
-    # owner: wealth_team
-  market:
-    description: "Market data for the wealth management domain."
-    # owner: market_team
+    description: Customers, accounts and transactions
+    # owner: wealth_team   # optional: group that owns the domain (see note below)
+    source_systems:
+      core_banking: Core banking system. Delivers customers and transactions.
+      legacy_accounts: Legacy account system. Delivers accounts.
 
-# Permissions can be defined at the catalog, schema, and table level. Permissions are inherited from the catalog to the schema and from the schema to the table.
+  market:
+    description: Securities, prices and asset classes, owned by the market team
+    # owner: market_team
+    source_systems:
+      investment_system: Investment system. Delivers the security master incl. funds and share classes.
+      business_reference: Reference data maintained by the business, e.g. the asset class mapping.
+      price_partner: Market data partner. Delivers daily closing prices.
+
+# Cross-domain access: all users may read the market domain's gold layer.
 grants:
   - principal: account users
     domain: market

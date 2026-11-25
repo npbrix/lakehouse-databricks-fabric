@@ -55,3 +55,13 @@ def test_prices_column_is_renamed_in_batch_3() -> None:
     row = generate_batch(3).prices[0]
     assert "close_pricez" in row
     assert "close_price" not in row
+
+
+def test_files_are_written_per_source_system(tmp_path) -> None:
+    from datagen.writer import write_batch
+
+    files = write_batch(generate_batch(1), 1, tmp_path)
+    paths = {f.relative_to(tmp_path).as_posix() for f in files}
+    assert "wealth/core_banking/customers/batch=001/customers.json" in paths
+    assert "wealth/legacy_accounts/accounts/batch=001/accounts.csv" in paths
+    assert "market/price_partner/prices/batch=001/prices.csv" in paths

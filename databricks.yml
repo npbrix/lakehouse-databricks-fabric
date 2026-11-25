@@ -1,6 +1,6 @@
 # Databricks Asset Bundle: defines the assets that are part of this bundle and how they should be deployed to Databricks.
 bundle:
-  name: lakehouse-finance-demo
+  name: lakehouse-databricks-fabric
 
 # Pipeleines and jobs can be defined in separate YAML files in the resources/ directory and included here.
 include:
