@@ -42,12 +42,18 @@ def define_bronze_table(dataset) -> None:
     Pipeline functions run lazily: with a plain loop every table would read the last dataset.
     Databricks Labs' sdp-meta (formerly dlt-meta) framework is built on the same idea.
 
-    Typical interview topic for metadata-driven ingestion: "How do you onboard 100 sources
-    without writing 100 pipeline files?" Answer: configuration + one generic function like this.
+    Metadata-driven ingestion: one generic pipeline function like this + config per source 
     """
     # The table goes to the source system's bronze schema, e.g. bronze_core_banking.customers.
     table_name = f"{dataset.bronze_schema}.{dataset.name}"
     landing_path = f"/Volumes/{CATALOG}/{dataset.bronze_schema}/landing/{dataset.name}"
+
+    # Databricks pattern: expectation as wanrning-only:
+    # We keep the violating row, count it in the data pipeline's data quality tab
+    # and in the event log, which we can alert on.
+    # expectations describe what we expect. Deviations are violations.
+    # expect = warning only because the data is valid, but something is odd.
+    @dp.expect("_rescued_data_is_empty", "_rescued_data IS NULL")
 
     @dp.table(
         name=table_name,

@@ -36,11 +36,14 @@ Two business domains (Data Mesh), each with its own catalog per environment.
 | Wealth | `dev_wealth`, `prod_wealth` | `core_banking`, `legacy_accounts` |
 | Market | `dev_market`, `prod_market` | `investment_system`, `business_reference`, `price_partner` |
 
-- **One catalog per domain and environment:** each domain owns its data and access rights, and dev and prod are separated.
-- **Bronze is organised by source system:** one schema and landing volume per system, so you always see where data comes from and can grant access per source.
-- **Silver and gold are organised by business meaning:** silver holds business entities, gold holds the domain's data products.
-- **Only gold is shared across domains:** other teams read the market domain's gold layer, never bronze or silver.
-- **Everything is code:** catalogs, schemas, volumes, tags and grants are created from [`config/unity_catalog.yml`](config/unity_catalog.yml).
+## Unity Catalog design
+
+- **One catalog per domain and environment** (`dev_wealth`, `prod_market`, ...): each domain owns its data and access rights (Data Mesh), and dev and prod are fully separated.
+- **Bronze is organised by source system:** one schema per system (`bronze_core_banking`, `bronze_price_partner`, ...), each with its own `landing` volume, so you can always see where data comes from and grant access per source.
+- **Silver and gold are organised by business meaning:** one `silver` and one `gold` schema per domain. Silver holds business entities, gold holds the domain's data products.
+- **Only gold is shared across domains:** other teams get `SELECT` on the market domain's gold layer, never on bronze or silver, so consumers depend on curated, stable data products.
+- **Everything is code:** `config/unity_catalog.yml` describes the design and `scripts/setup_unity_catalog.py` applies it idempotently, so the setup can be reviewed, repeated and recreated.
+- **Adding a domain or a source system** means a few lines in the YAML file and a re-run of the script, with no code changes.
 
 ## Getting started
 
@@ -60,14 +63,18 @@ databricks bundle run wealth_pipeline
 - [x] Unity Catalog design as code
 - [x] Synthetic source data
 - [x] Bronze: metadata-driven ingestion with Auto Loader
-- [ ] Unity Catalog and grants with Terraform  *(in progress)*
-- [ ] CI/CD with bundles and promotion from dev to prod
-- [ ] Ingestion patterns per source: CDC, watermark, snapshot diff, full load
-- [ ] Silver: cleansing and data quality expectations
-- [ ] Gold: Kimball, SCD2 and data products with data contracts
+- [x] Schema evolution: from rescued data to a governed column
+- [ ] Unity Catalog, access model and grants with Terraform   *(in progress)*
+- [ ] CI/CD: dev → test → prod with bundles, Terraform and approvals
+- [ ] Ingestion patterns per source: Oracle CDC, watermark, snapshot diff, full load
+- [ ] Ingestion operations: data quality framework, quarantine, replay, SLAs and cut-over
+- [ ] Silver: cleansing and data quality rules from configuration
+- [ ] Gold: Kimball, SCD2 and data products with data contracts and output ports
 - [ ] Governance: classification tags, ABAC masking and lineage
 - [ ] Cost control and reference architecture for workspaces and networking
 - [ ] Microsoft Fabric: Direct Lake semantic model and Power BI report
+- [ ] AI output port: gold data products as MCP tools for Claude
+- [ ] Optional, on Azure: one workspace per environment, Data Factory, MCP on Container Apps
 
 ## Decisions
 

@@ -53,3 +53,7 @@ def test_missing_keys_are_rejected(tmp_path: Path) -> None:
         "datasets:\n  - {name: a, format: json}\n", encoding="utf-8")
     with pytest.raises(ValueError, match="missing keys"):
         load_datasets(tmp_path, "wealth")
+
+def test_prices_contract_includes_currency() -> None:
+    prices = next(d for d in load_datasets(SOURCES_DIR, "market") if d.name == "prices")
+    assert "currency STRING" in prices.schema
